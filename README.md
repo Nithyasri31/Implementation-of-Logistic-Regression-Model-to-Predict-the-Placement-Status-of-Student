@@ -8,8 +8,8 @@ To write a program to implement the the Logistic Regression Model to Predict the
 2. Anaconda – Python 3.7 Installation / Jupyter notebook
 
 ## Algorithm
-
-1. Import libraries & load data using pandas, and preview with df.head().
+```
+1.Import libraries & load data using pandas, and preview with df.head().
 
 2.Clean data by dropping sl_no and salary, checking for nulls and duplicates.
 
@@ -27,7 +27,7 @@ y = status (Placed/Not Placed)
 
 7.Evaluate model with accuracy, confusion matrix, and classification report.
 
-
+```
 ## Program:
 ```
 /*
@@ -35,42 +35,53 @@ Program to implement the the Logistic Regression Model to Predict the Placement 
 Developed by: NITHYASRI M
 RegisterNumber:  212224040226
 */
-from sklearn.datasets import load_iris
-from sklearn.linear_model import SGDClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, confusion_matrix
-import matplotlib.pyplot as plt
-import seaborn as sns
 import pandas as pd
-iris = load_iris()
-df = pd.DataFrame(data=iris.data, columns=iris.feature_names)
-df['target'] = iris.target
-print(df.head())
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+data = pd.read_csv("/content/Placement_Data.csv")
+data.head()
 
-x = df.drop('target', axis=1)
-y = df['target']
+data1 = data.copy()
+data1 = data1.drop(["sl_no", "salary"], axis=1)
+data1.isnull().sum()
+data1.duplicated().sum()
+le = LabelEncoder()
+data1["gender"] = le.fit_transform(data1["gender"])
+data1["ssc_b"] = le.fit_transform(data1["ssc_b"])
+data1["hsc_b"] = le.fit_transform(data1["hsc_b"])
+data1["hsc_s"] = le.fit_transform(data1["hsc_s"])
+data1["degree_t"] = le.fit_transform(data1["degree_t"])
+data1["workex"] = le.fit_transform(data1["workex"])
+data1["specialisation"] = le.fit_transform(data1["specialisation"])
+data1["status"] = le.fit_transform(data1["status"])
+data1.head()
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+x = data1.iloc[:, :-1]
+y = data1["status"]
 
-sgd_clf = SGDClassifier(max_iter=1000, tol=1e-3)
-sgd_clf.fit(x_train, y_train)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
 
-y_pred = sgd_clf.predict(x_test)
+lr = LogisticRegression(solver="liblinear")
+lr.fit(x_train, y_train)
+
+y_pred = lr.predict(x_test)
 accuracy = accuracy_score(y_test, y_pred)
-print(f"Accuracy: {accuracy:.3f}")
+print("Accuracy:", accuracy)
+confusion = confusion_matrix(y_test, y_pred)
+print("Confusion Matrix:\n", confusion)
+classification_report1 = classification_report(y_test, y_pred)
+print("Classification Report:\n", classification_report1)
 
-cf = confusion_matrix(y_test, y_pred)
-print("Confusion Matrix:")
-print(cf)
+
 ```
 
 ## Output:
+![image](https://github.com/user-attachments/assets/f9ae33e0-b2d9-4e7e-928b-0068da565898)
+![image](https://github.com/user-attachments/assets/5065f2ba-2735-4f97-8355-11b6a08d008a)
 
-![image](https://github.com/user-attachments/assets/02f5c9a1-1a10-4f48-bffb-4d5bd96b2a5f)
 
-![image](https://github.com/user-attachments/assets/9c3aaaa2-5a56-4050-a9b0-32ac937ae671)
-
-![image](https://github.com/user-attachments/assets/044ac5fc-9228-4553-9804-43f9024980ed)
 
 ## Result:
 Thus the program to implement the the Logistic Regression Model to Predict the Placement Status of Student is written and verified using python programming.
